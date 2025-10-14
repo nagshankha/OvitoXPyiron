@@ -1,5 +1,6 @@
 import ovito
 from ovito.modifiers import PythonModifier
+from ovito.pipeline import Pipeline, PythonSource
 from pyiron_workflow import Workflow
 from .utils import make_function_node_from_dict
 
@@ -18,6 +19,14 @@ class Ovito2Pyiron:
     def _create_pyiron_workflow(self):
 
         self.wf = Workflow("structure creation with OVITO")
+
+        @Workflow.wrap.as_function_node
+        def pipeline_initiation():
+            pipeline = Pipeline(source = PythonSource(function = 
+                                        self.imported_pipeline.source.function))
+            return pipeline
+        
+        self.wf.pipeline_initiation = pipeline_initiation()
 
         for i in len(self.imported_pipeline.modifiers):
             mod = self.imported_pipeline.modifiers[i]
@@ -49,7 +58,15 @@ class Ovito2Pyiron:
                 ]
                 args_dict = {name: getattr(mod, name) for name in arg_names}
 
-            setattr(self.wf, f"modifier_{i+1}", 
+            if i == 0:
+                self.wf.modifier_1 = make_function_node_from_dict(mod.title, 
+                                                     args_dict, 
+                                                     func)(pipeline = 
+                                                             self.wf.pipeline_initiation.pipeline,
+                                                         **args_dict
+                                                     )
+            else:
+                setattr(self.wf, f"modifier_{i+1}", 
                         make_function_node_from_dict(mod.title, 
                                                      args_dict, 
                                                      func)(

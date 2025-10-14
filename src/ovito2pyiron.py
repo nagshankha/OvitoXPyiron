@@ -24,22 +24,40 @@ class Ovito2Pyiron:
 
             if isinstance(mod, ovito.modifiers.PythonModifier):
                 # User-defined PythonModifier
-                args_dict = vars(mod.delegate)
 
-                def func(new_pipeline, **kwargs):
+                def func(pipeline, **kwargs):
                     cls = type(mod.delegate)
                     for key, value in kwargs:
                         setattr(cls, key, value)
                     new_mod = PythonModifier(delegate=cls())
-                    new_pipeline.modifiers.append(new_mod)
-                    return new_pipeline
-
+                    pipeline.modifiers.append(new_mod)
+                    return pipeline
+                
+                args_dict = vars(mod.delegate)                
             else:
                 # Built-in modifier
                 cls = type(mod)
+
+                def func(pipeline, **kwargs):
+                    new_mod = cls(**kwargs)
+                    pipeline.modifiers.append(new_mod)
+                    return pipeline
+
                 arg_names = [
                     name for name, attr in vars(cls).items()
                     if type(attr) is property
                 ]
                 args_dict = {name: getattr(mod, name) for name in arg_names}
-                new_pipeline.modifiers.append(cls(**args_dict))
+
+            setattr(self.wf, f"modifier_{i+1}", 
+                        make_function_node_from_dict(mod.title, 
+                                                     args_dict, 
+                                                     func)(
+                                                         pipeline = getattr(
+                                                             self.wf, 
+                                                             f"modifier_{i}",
+                                                             "pipeline"
+                                                         ),
+                                                         **args_dict
+                                                     ))
+                

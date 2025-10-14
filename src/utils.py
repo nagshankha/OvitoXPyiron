@@ -14,13 +14,21 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
     Returns:
         callable: pyiron_workflow-compatible function node.
     """
-    # Build inspect.Parameter list
-    parameters = []
+    # First argument: required OVITO pipeline
+    parameters = [
+        inspect.Parameter(
+            "pipeline",
+            kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            annotation="ovito.pipeline.Pipeline",
+        )
+    ]
+
+    # The rest: keyword-only args
     for key, default in param_info.items():
         parameters.append(
             inspect.Parameter(
                 name=key,
-                kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                kind=inspect.Parameter.KEYWORD_ONLY,
                 default=default
             )
         )
@@ -28,8 +36,8 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
     sig = inspect.Signature(parameters)
 
     # Create wrapper function that uses the signature
-    def func_template(**kwargs):
-        return body_func(**kwargs)
+    def func_template(pipeline, **kwargs):
+        return body_func(pipeline, **kwargs)
 
     # Attach metadata
     func_template.__name__ = name

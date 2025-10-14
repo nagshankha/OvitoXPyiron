@@ -17,7 +17,7 @@ class Ovito2Pyiron:
 
     def _create_pyiron_workflow(self):
 
-        wf = Workflow("structure_creation_with_OVITO")
+        self.wf = Workflow("structure creation with OVITO")
 
         for i in len(self.imported_pipeline.modifiers):
             mod = self.imported_pipeline.modifiers[i]
@@ -26,14 +26,13 @@ class Ovito2Pyiron:
                 # User-defined PythonModifier
                 args_dict = vars(mod.delegate)
 
-                @Workflow.wrap.as_function_node
-                def func(args_dict = args_dict):
+                def func(new_pipeline, **kwargs):
                     cls = type(mod.delegate)
-                new_delegate = cls(**args_dict)
-
-                new_mod = PythonModifier(function=new_delegate.modify)
-                new_mod.delegate = new_delegate
-                new_pipeline.modifiers.append(new_mod)
+                    for key, value in kwargs:
+                        setattr(cls, key, value)
+                    new_mod = PythonModifier(delegate=cls())
+                    new_pipeline.modifiers.append(new_mod)
+                    return new_pipeline
 
             else:
                 # Built-in modifier

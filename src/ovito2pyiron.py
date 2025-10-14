@@ -11,6 +11,7 @@ class Ovito2Pyiron:
             raise NotImplementedError("This package supports Ovito scene "+
                                       "with only a single pipeline")
         self._imported_pipeline = ovito.scene.pipelines[0]
+        self._create_pyiron_workflow()
 
     @property
     def imported_pipeline(self):

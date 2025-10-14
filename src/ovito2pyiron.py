@@ -29,7 +29,7 @@ class Ovito2Pyiron:
         
         self.wf.pipeline_initiation = pipeline_initiation()
 
-        for i in len(self.imported_pipeline.modifiers):
+        for i in range(len(self.imported_pipeline.modifiers)):
             mod = self.imported_pipeline.modifiers[i]
 
             if isinstance(mod, ovito.modifiers.PythonModifier):

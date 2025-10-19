@@ -63,8 +63,7 @@ class Ovito2Pyiron:
                 self.wf.modifier_1 = make_function_node_from_dict(mod.title, 
                                                      args_dict, 
                                                      func)(pipeline = 
-                                                             self.wf.pipeline_initiation.pipeline,
-                                                         **args_dict
+                                                             self.wf.pipeline_initiation.pipeline
                                                      )
             else:
                 setattr(self.wf, f"modifier_{i+1}", 
@@ -73,7 +72,6 @@ class Ovito2Pyiron:
                                                      func)(
                                                          pipeline = getattr(
                                                              self.wf, 
-                                                             f"modifier_{i}").pipeline,
-                                                         **args_dict
+                                                             f"modifier_{i}").pipeline
                                                      ))
                 

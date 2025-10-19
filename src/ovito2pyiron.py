@@ -35,24 +35,30 @@ class Ovito2Pyiron:
             if isinstance(mod, ovito.modifiers.PythonModifier):
                 # User-defined PythonModifier
 
-                def func(pipeline, **kwargs):
-                    cls = type(mod.delegate)
-                    for key, value in kwargs:
-                        setattr(cls, key, value)
-                    new_mod = PythonModifier(delegate=cls())
-                    pipeline.modifiers.append(new_mod)
-                    return pipeline
-                
+                def make_func(mod):
+                    def func(pipeline, **kwargs):
+                        cls = type(mod.delegate)
+                        for key, value in kwargs:
+                            setattr(cls, key, value)
+                        new_mod = PythonModifier(delegate=cls())
+                        pipeline.modifiers.append(new_mod)
+                        return pipeline
+                    return func
+
+                func = make_func(mod)                
                 args_dict = vars(mod.delegate)                
             else:
                 # Built-in modifier
                 cls = type(mod)
 
-                def func(pipeline, **kwargs):
-                    new_mod = cls(**kwargs)
-                    pipeline.modifiers.append(new_mod)
-                    return pipeline
-
+                def make_func(cls):
+                    def func(pipeline, **kwargs):
+                        new_mod = cls(**kwargs)
+                        pipeline.modifiers.append(new_mod)
+                        return pipeline
+                    return func
+                
+                func = make_func(cls)
                 arg_names = [
                     name for name, attr in vars(cls).items()
                     if type(attr) is property

@@ -41,6 +41,7 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
 
     # Attach metadata
     func_template.__name__ = name
+    func_template.__qualname__ = name
     func_template.__signature__ = sig
 
     # Wrap as pyiron_workflow node

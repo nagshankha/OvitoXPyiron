@@ -40,6 +40,7 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
         return body_func(pipeline, **kwargs)
 
     # Attach metadata
+    name = '_'.join(name.split())
     func_template.__name__ = name
     func_template.__qualname__ = name
     func_template.__signature__ = sig

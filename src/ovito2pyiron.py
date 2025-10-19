@@ -73,9 +73,7 @@ class Ovito2Pyiron:
                                                      func)(
                                                          pipeline = getattr(
                                                              self.wf, 
-                                                             f"modifier_{i}",
-                                                             "pipeline"
-                                                         ),
+                                                             f"modifier_{i}").pipeline,
                                                          **args_dict
                                                      ))
                 

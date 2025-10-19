@@ -65,15 +65,17 @@ class Ovito2Pyiron:
                 ]
                 args_dict = {name: getattr(mod, name) for name in arg_names}
 
+            node_name = mod.title if mod.title != '' else mod.__class__.__name__
+
             if i == 0:
-                self.wf.modifier_1 = make_function_node_from_dict(mod.title, 
+                self.wf.modifier_1 = make_function_node_from_dict(node_name, 
                                                      args_dict, 
                                                      func)(pipeline = 
                                                              self.wf.pipeline_initiation
                                                      )
             else:
                 setattr(self.wf, f"modifier_{i+1}", 
-                        make_function_node_from_dict(mod.title, 
+                        make_function_node_from_dict(node_name, 
                                                      args_dict, 
                                                      func)(
                                                          pipeline = getattr(

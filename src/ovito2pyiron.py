@@ -21,13 +21,14 @@ class Ovito2Pyiron:
 
         self.wf = Workflow("structure creation with OVITO")
 
-        @Workflow.wrap.as_function_node
         def pipeline_initiation():
             pipeline = Pipeline(source = PythonSource(function = 
                                         self.imported_pipeline.source.function))
             return pipeline
         
-        self.wf.pipeline_initiation = pipeline_initiation()
+        pipeline_initiation.__qualname__ = pipeline_initiation.__name__
+        pipeline_initiation_wrapped = Workflow.wrap.as_function_node(pipeline_initiation)        
+        self.wf.pipeline_initiation = pipeline_initiation_wrapped()
 
         for i in range(len(self.imported_pipeline.modifiers)):
             mod = self.imported_pipeline.modifiers[i]

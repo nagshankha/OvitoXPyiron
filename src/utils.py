@@ -27,7 +27,7 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
     # The rest: keyword-only args
     for key, default in param_info.items():
         type_hint = default.__class__
-        if isinstance(type_hint, traits.trait_list_object.TraitListObject):
+        if type_hint is traits.trait_list_object.TraitListObject:
             type_hint = list
         parameters.append(
             inspect.Parameter(

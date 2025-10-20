@@ -37,7 +37,8 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
 
     # Create wrapper function that uses the signature
     def func_template(pipeline, **kwargs):
-        return body_func(pipeline, **kwargs)
+        pipeline = body_func(pipeline, **kwargs)
+        return pipeline
 
     # Attach metadata
     name = '_'.join(name.split())
@@ -46,5 +47,5 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
     func_template.__signature__ = sig
 
     # Wrap as pyiron_workflow node
-    wrapped = Workflow.wrap.as_function_node(func_template, outputs=["pipeline"])
+    wrapped = Workflow.wrap.as_function_node(func_template)
     return wrapped

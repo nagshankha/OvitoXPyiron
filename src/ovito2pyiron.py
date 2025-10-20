@@ -64,7 +64,7 @@ class Ovito2Pyiron:
                     name for name, attr in vars(cls).items()
                     if type(attr) is property
                 ]
-                args_dict = {name: getattr(mod, name) for name in arg_names}
+                args_dict = dict([(name, getattr(mod, name)) for name in arg_names])
 
             node_name = mod.title if mod.title != '' else mod.__class__.__name__
 

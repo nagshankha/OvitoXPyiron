@@ -29,7 +29,8 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
             inspect.Parameter(
                 name=key,
                 kind=inspect.Parameter.KEYWORD_ONLY,
-                default=default
+                default=default,
+                annotation=default.__class__.__name__
             )
         )
 

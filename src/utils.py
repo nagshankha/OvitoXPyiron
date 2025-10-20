@@ -1,6 +1,7 @@
 import numpy as np
 import inspect
 from pyiron_workflow import Workflow
+import ovito
 
 def make_function_node_from_dict(name: str, param_info: dict, body_func: callable):
     """
@@ -19,7 +20,7 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
         inspect.Parameter(
             "pipeline",
             kind=inspect.Parameter.POSITIONAL_OR_KEYWORD,
-            annotation="ovito.pipeline.Pipeline",
+            annotation=ovito.pipeline.Pipeline,
         )
     ]
 
@@ -30,7 +31,7 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
                 name=key,
                 kind=inspect.Parameter.KEYWORD_ONLY,
                 default=default,
-                annotation=default.__class__.__name__
+                annotation=default.__class__
             )
         )
 

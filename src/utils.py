@@ -1,7 +1,7 @@
 import numpy as np
 import inspect
 from pyiron_workflow import Workflow
-import ovito
+import ovito, traits
 
 def make_function_node_from_dict(name: str, param_info: dict, body_func: callable):
     """
@@ -26,12 +26,15 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
 
     # The rest: keyword-only args
     for key, default in param_info.items():
+        type_hint = default.__class__
+        if isinstance(type_hint, traits.trait_list_object.TraitListObject):
+            type_hint = list
         parameters.append(
             inspect.Parameter(
                 name=key,
                 kind=inspect.Parameter.KEYWORD_ONLY,
                 default=default,
-                annotation=default.__class__
+                annotation=type_hint
             )
         )
 

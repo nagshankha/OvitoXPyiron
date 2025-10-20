@@ -30,6 +30,7 @@ class Ovito2Pyiron:
         pipeline_initiation_wrapped = Workflow.wrap.as_function_node(pipeline_initiation)        
         self.wf.pipeline_initiation = pipeline_initiation_wrapped()
 
+        node_names = []
         for i in range(len(self.imported_pipeline.modifiers)):
             mod = self.imported_pipeline.modifiers[i]
 
@@ -68,19 +69,20 @@ class Ovito2Pyiron:
 
             node_name = mod.title if mod.title != '' else mod.__class__.__name__
 
+            node_names.append(node_name)
             if i == 0:
-                self.wf.modifier_1 = make_function_node_from_dict(node_name, 
+                setattr(self.wf, node_name, make_function_node_from_dict(node_name, 
                                                      args_dict, 
                                                      func)(pipeline = 
                                                              self.wf.pipeline_initiation
-                                                     )
+                                                     ))
             else:
-                setattr(self.wf, f"modifier_{i+1}", 
+                setattr(self.wf, node_name, 
                         make_function_node_from_dict(node_name, 
                                                      args_dict, 
                                                      func)(
                                                          pipeline = getattr(
                                                              self.wf, 
-                                                             f"modifier_{i}")
+                                                             node_names[i-1])
                                                      ))
                 

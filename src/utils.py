@@ -46,5 +46,5 @@ def make_function_node_from_dict(name: str, param_info: dict, body_func: callabl
     func_template.__signature__ = sig
 
     # Wrap as pyiron_workflow node
-    wrapped = Workflow.wrap.as_function_node(func_template, output=["pipeline"])
+    wrapped = Workflow.wrap.as_function_node(func_template, outputs=["pipeline"])
     return wrapped

@@ -1,7 +1,7 @@
+from pyiron_workflow import Workflow
 import ovito
 from ovito.modifiers import PythonModifier
 from ovito.pipeline import Pipeline, PythonSource
-from pyiron_workflow import Workflow
 from .utils import make_function_node_from_dict
 
 class Ovito2Pyiron:
